@@ -18,6 +18,11 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        Properties properties = new Properties()
+
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        manifestPlaceholders = [MAPS_API_KEY: "${properties.getProperty('MAPS_API_KEY')}"]
     }
 
     buildTypes {
@@ -61,6 +66,11 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-workmanager:$koin_android_version"
     implementation "io.insert-koin:koin-androidx-navigation:$koin_android_version"
     implementation "io.insert-koin:koin-androidx-compose:$koin_android_compose_version"
+
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0"
+    implementation "io.coil-kt:coil-compose:2.2.2"
 
     testImplementation 'junit:junit:4.13.2'
     
