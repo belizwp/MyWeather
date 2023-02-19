@@ -1,15 +1,15 @@
 package com.belizwp.myweather.di
 
+import com.belizwp.myweather.BuildConfig
 import com.belizwp.myweather.data.WeatherRepository
 import com.belizwp.myweather.data.WeatherStackApiService
 import com.belizwp.myweather.ui.MyWeatherViewModel
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.net.SocketFactory
 
 val appModule = module {
     factory { provideOkHttpClient() }
@@ -27,10 +27,10 @@ fun provideOkHttpClient(): OkHttpClient {
 }
 
 fun provideWeatherStackApi(okHttpClient: OkHttpClient): WeatherStackApiService {
-    val retrofit = Retrofit.Builder()
-        .baseUrl("http://api.weatherstack.com")
+    val retrofit: Retrofit = Retrofit.Builder()
         .client(okHttpClient)
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BuildConfig.WEATHER_STACK_BASE_URL)
         .build()
 
     return retrofit.create(WeatherStackApiService::class.java)

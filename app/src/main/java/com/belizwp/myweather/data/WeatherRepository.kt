@@ -1,19 +1,21 @@
 package com.belizwp.myweather.data
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.belizwp.myweather.BuildConfig
 import retrofit2.http.GET
 import retrofit2.http.Query
+import com.google.gson.annotations.SerializedName
 
 data class Weather(
     val cityName: String = "",
     val country: String = "",
     val temperature: String = "",
-    val weatherIconUrls: List<String> = listOf(),
+    val weatherIconUrl: String = "",
     val humidity: String = "",
     val pressure: String = "",
     val uvIndex: String = "",
-    val windSpeed: String = ""
+    val wind: String = "",
+    val lat: Double = 0.0,
+    val lon: Double = 0.0,
 )
 
 class WeatherRepository(
@@ -21,20 +23,52 @@ class WeatherRepository(
 ) {
     suspend fun getWeatherByCityName(cityName: String): Weather {
         val resp = weatherStackApiService.getCurrentWeather(
-            accessKey = "replaceme",
+            accessKey = BuildConfig.WEATHER_STACK_ACCESS_KEY,
             query = cityName,
         )
+        if (resp.error != null) {
+            throw Exception("${resp.error.code}: ${resp.error.type}")
+        }
         return Weather(
             cityName = resp.location.name,
             country = resp.location.country,
-            temperature = resp.current.temperature.toString(),
-            weatherIconUrls = resp.current.weatherIcons,
-            humidity = resp.current.humidity.toString(),
-            pressure = resp.current.pressure.toString(),
-            uvIndex = resp.current.uvIndex.toString(),
-            windSpeed = resp.current.windSpeed.toString(),
+            temperature = formatTemperature(resp.current.temperature),
+            weatherIconUrl = resp.current.weatherIcons.firstOrNull() ?: "",
+            humidity = formatHumidity(resp.current.humidity),
+            pressure = formatPressure(resp.current.pressure),
+            uvIndex = formatUvIndex(resp.current.uvIndex),
+            wind = formatWind(resp.current.windSpeed, resp.current.windDir),
+            lat = resp.location.lat.toDouble(),
+            lon = resp.location.lon.toDouble(),
         )
     }
+}
+
+private fun formatTemperature(temperature: Int): String {
+    return "${temperature}°C"
+}
+
+private fun formatHumidity(humidity: Int): String {
+    return "${humidity}%"
+}
+
+private fun formatPressure(pressure: Int): String {
+    return "${pressure} mBar"
+}
+
+private fun formatUvIndex(uvIndex: Int): String {
+    val uvLevel = when (uvIndex) {
+        in 0..2 -> "Low"
+        in 3..5 -> "Moderate"
+        in 6..7 -> "High"
+        in 8..10 -> "Very High"
+        else -> "Extreme"
+    }
+    return "${uvLevel}, ${uvIndex}"
+}
+
+private fun formatWind(windSpeed: Int, windDir: String): String {
+    return "${windSpeed}km/h ${windDir}"
 }
 
 interface WeatherStackApiService {
@@ -47,82 +81,91 @@ interface WeatherStackApiService {
 
 }
 
-@Serializable
 data class WeatherStackResponse(
-    @SerialName(value = "request")
+    @SerializedName("success")
+    val success: Boolean = true,
+    @SerializedName("error")
+    val error: Error? = null,
+    @SerializedName("request")
     val request: Request,
-    @SerialName(value = "location")
+    @SerializedName("location")
     val location: Location,
-    @SerialName(value = "current")
+    @SerializedName("current")
     val current: Current,
 )
 
-@Serializable
-data class Request(
-    @SerialName(value = "type")
+data class Error(
+    @SerializedName("code")
+    val code: Int,
+    @SerializedName("type")
     val type: String,
-    @SerialName(value = "query")
+    @SerializedName("info")
+    val info: String
+)
+
+data class Request(
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("query")
     val query: String,
-    @SerialName(value = "language")
+    @SerializedName("language")
     val language: String,
-    @SerialName(value = "unit")
+    @SerializedName("unit")
     val unit: String
 )
 
-@Serializable
 data class Location(
-    @SerialName(value = "name")
+    @SerializedName("name")
     val name: String,
-    @SerialName(value = "country")
+    @SerializedName("country")
     val country: String,
-    @SerialName(value = "region")
+    @SerializedName("region")
     val region: String,
-    @SerialName(value = "lat")
+    @SerializedName("lat")
     val lat: String,
-    @SerialName(value = "lon")
+    @SerializedName("lon")
     val lon: String,
-    @SerialName(value = "timezone_id")
+    @SerializedName("timezone_id")
     val timezoneId: String,
-    @SerialName(value = "localtime")
+    @SerializedName("localtime")
     val localtime: String,
-    @SerialName(value = "localtime_epoch")
+    @SerializedName("localtime_epoch")
     val localtimeEpoch: Int,
-    @SerialName(value = "utc_offset")
+    @SerializedName("utc_offset")
     val utcOffset: String
 )
 
-@Serializable
 data class Current(
-    @SerialName(value = "observation_time")
+    @SerializedName("observation_time")
     val observationTime: String,
-    @SerialName(value = "temperature")
+    @SerializedName("temperature")
     val temperature: Int,
-    @SerialName(value = "weather_code")
+    @SerializedName("weather_code")
     val weatherCode: Int,
-    @SerialName(value = "weather_icons")
+    @SerializedName("weather_icons")
     val weatherIcons: ArrayList<String> = arrayListOf(),
-    @SerialName(value = "weather_descriptions")
+    @SerializedName("weather_descriptions")
     val weatherDescriptions: ArrayList<String> = arrayListOf(),
-    @SerialName(value = "wind_speed")
+    @SerializedName("wind_speed")
     val windSpeed: Int,
-    @SerialName(value = "wind_degree")
+    @SerializedName("wind_degree")
     val windDegree: Int,
-    @SerialName(value = "wind_dir")
+    @SerializedName("wind_dir")
     val windDir: String,
-    @SerialName(value = "pressure")
+    @SerializedName("pressure")
     val pressure: Int,
-    @SerialName(value = "precip")
+    @SerializedName("precip")
     val precip: Int,
-    @SerialName(value = "humidity")
+    @SerializedName("humidity")
     val humidity: Int,
-    @SerialName(value = "cloudcover")
+    @SerializedName("cloudcover")
     val cloudcover: Int,
-    @SerialName(value = "feelslike")
+    @SerializedName("feelslike")
     val feelslike: Int,
-    @SerialName(value = "uv_index")
+    @SerializedName("uv_index")
     val uvIndex: Int,
-    @SerialName(value = "visibility")
+    @SerializedName("visibility")
     val visibility: Int,
-    @SerialName(value = "is_day")
+    @SerializedName("is_day")
     val isDay: String
 )
