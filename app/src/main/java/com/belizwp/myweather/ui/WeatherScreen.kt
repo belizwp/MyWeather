@@ -16,18 +16,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.belizwp.myweather.R
+import com.belizwp.myweather.data.Weather
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WeatherScreen(
     modifier: Modifier = Modifier,
+    weather: Weather = Weather(),
     onCityNameClicked: () -> Unit = {},
     navigateBack: () -> Unit = {},
     refreshing: Boolean = false,
@@ -46,34 +50,32 @@ fun WeatherScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.colors.secondary)
+                        .background(color = MaterialTheme.colors.primary)
                         .clickable { onCityNameClicked() }
                         .padding(32.dp)
                 ) {
                     Text(
-                        text = "Tokyo",
+                        text = weather.cityName,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Medium,
                     )
                     Text(
-                        text = "Japan",
+                        text = weather.country,
                         fontSize = 18.sp,
                     )
                     Text(
-                        "32°C",
+                        text = weather.temperature,
                         fontSize = 48.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 16.dp)
                     )
                     AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current)
-                            .data("https://cdn.worldweatheronline.com/images/wsymbols01_png_64/wsymbol_0017_cloudy_with_light_rain.png")
-                            .crossfade(true)
-                            .build(),
-                        error = null,
-                        placeholder = null,
+                        model = weather.weatherIconUrl,
+                        error = painterResource(R.drawable.ic_broken_image),
+                        placeholder = painterResource(R.drawable.loading_img),
                         contentDescription = null,
                         contentScale = ContentScale.FillBounds,
+                        modifier = Modifier.size(100.dp)
                     )
                 }
             }
@@ -89,28 +91,28 @@ fun WeatherScreen(
                     )
                     DetailItem(
                         "Humidity",
-                        "50%",
+                        weather.humidity,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
                     )
                     DetailItem(
                         "Pressure",
-                        "1000 mBar",
+                        weather.pressure,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
                     )
                     DetailItem(
                         "UV Index",
-                        "High, 5",
+                        weather.uvIndex,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
                     )
                     DetailItem(
                         "Wind",
-                        "1km/h ENE",
+                        weather.wind,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
@@ -134,8 +136,18 @@ fun DetailItem(name: String, value: String, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun HomeScreenPreview() {
+fun WeatherScreenPreview() {
+    val mockWeather = Weather(
+        cityName = "Jakarta",
+        country = "Indonesia",
+        temperature = "30°C",
+        weatherIconUrl = "",
+        humidity = "50%",
+        pressure = "1000 mBar",
+        uvIndex = "High, 5",
+        wind = "10 km/h, ENE"
+    )
     MyWeatherTheme {
-        WeatherScreen()
+        WeatherScreen(weather = mockWeather)
     }
 }

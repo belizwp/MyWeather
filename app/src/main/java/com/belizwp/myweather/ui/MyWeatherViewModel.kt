@@ -1,57 +1,63 @@
 package com.belizwp.myweather.ui
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.belizwp.myweather.data.SearchUiState
+import com.belizwp.myweather.data.Weather
 import com.belizwp.myweather.data.WeatherRepository
-import com.belizwp.myweather.data.WeatherUiState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+const val TAG = "MyWeatherViewModel"
+
+data class SearchState(
+    val query: String = "",
+    val isQueryValid: Boolean = true,
+)
+
+sealed interface WeatherState {
+    object Loading : WeatherState
+    data class Success(val cityName: String = "") : WeatherState
+    object Error : WeatherState
+}
 
 class MyWeatherViewModel(
     private val weatherRepository: WeatherRepository,
 ) : ViewModel() {
 
-    private val _weatherUiState: MutableStateFlow<WeatherUiState> =
-        MutableStateFlow(WeatherUiState.Success())
-    val weatherUiState: StateFlow<WeatherUiState> = _weatherUiState.asStateFlow()
+    var weather = mutableStateOf(Weather())
+        private set
 
-    private val _searchUiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState())
-    val searchUiState: StateFlow<SearchUiState> = _searchUiState.asStateFlow()
+    var isLoading = mutableStateOf(false)
+        private set
 
     var isRefreshing = mutableStateOf(false)
         private set
 
+    var query = mutableStateOf("")
+        private set
+
     fun updateQuery(query: String) {
-        _searchUiState.update {
-            it.copy(
-                query = query,
-                isQueryValid = validateQuery(query),
-            )
-        }
+        this.query.value = query
     }
 
-    fun findWeather(): Boolean {
-        if (validateQuery(_searchUiState.value.query).not()) {
-            _searchUiState.update {
-                it.copy(
-                    isQueryValid = false,
-                )
-            }
-            return false
-        }
-
-        _weatherUiState.value = WeatherUiState.Loading
+    fun search(
+        onSearchSuccess: () -> Unit = {},
+        onSearchError: (String) -> Unit = {},
+    ) {
         viewModelScope.launch {
-            delay(400)
-            _weatherUiState.value = WeatherUiState.Success()
+            isLoading.value = true
+            try {
+                weather.value = weatherRepository.getWeatherByCityName(query.value)
+                isLoading.value = false
+                onSearchSuccess()
+            } catch (e: Exception) {
+                Log.e(TAG, "search: ", e)
+                isLoading.value = false
+                onSearchError(e.message ?: "Unknown error")
+            }
         }
-        return true
     }
 
     fun refresh() {
@@ -59,7 +65,6 @@ class MyWeatherViewModel(
         viewModelScope.launch {
             delay(400)
             isRefreshing.value = false
-            _weatherUiState.value = WeatherUiState.Success()
         }
     }
 

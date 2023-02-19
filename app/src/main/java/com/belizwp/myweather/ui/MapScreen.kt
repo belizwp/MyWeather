@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.belizwp.myweather.data.Weather
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -17,26 +18,26 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
+    weather: Weather = Weather(),
     navigateBack: () -> Unit = {},
-    viewModel: MyWeatherViewModel = koinViewModel(),
 ) {
     BackHandler() {
         navigateBack()
     }
 
-    val singapore = LatLng(1.35, 103.87)
+    val location = LatLng(weather.lat, weather.lon)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        position = CameraPosition.fromLatLngZoom(location, 10f)
     }
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
+        modifier = modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
     ) {
         Marker(
-            state = MarkerState(position = singapore),
-            title = "Singapore",
-            snippet = "Marker in Singapore"
+            state = MarkerState(position = location),
+            title = weather.cityName,
+            snippet = "Marker in ${weather.cityName}"
         )
     }
 }
