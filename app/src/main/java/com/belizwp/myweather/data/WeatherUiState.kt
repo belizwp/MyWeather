@@ -2,7 +2,7 @@ package com.belizwp.myweather.data
 
 sealed interface WeatherUiState {
     data class Success(
-        val name: String = "",
+        val cityName: String = "",
         val country: String = "",
         val temperature: String = "",
         val weatherIconUrls: List<String> = listOf(),
