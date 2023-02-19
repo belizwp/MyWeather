@@ -10,6 +10,7 @@ import com.belizwp.myweather.ui.MapScreen
 import com.belizwp.myweather.ui.MyWeatherViewModel
 import com.belizwp.myweather.ui.SearchScreen
 import com.belizwp.myweather.ui.WeatherScreen
+import com.belizwp.myweather.ui.components.LoadingDialog
 import com.belizwp.myweather.ui.components.DoubleBackPressToExit
 import org.koin.androidx.compose.koinViewModel
 
@@ -25,6 +26,10 @@ fun MyWeatherApp(
     viewModel: MyWeatherViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
+    if (viewModel.isLoading.value) {
+        LoadingDialog()
+    }
+
     NavHost(
         navController = navController,
         startDestination = MyWeatherScreen.Search.name,
@@ -32,8 +37,10 @@ fun MyWeatherApp(
     ) {
         composable(route = MyWeatherScreen.Search.name) {
             SearchScreen(
+                query = viewModel.query.value,
                 onQueryChanged = { viewModel.updateQuery(it) },
-                onSearchButtonClicked = { navController.navigate(MyWeatherScreen.Weather.name) }
+                onSearchButtonClicked = { viewModel.search() },
+//                onSearchButtonClicked = { navController.navigate(MyWeatherScreen.Weather.name) }
             )
         }
         composable(route = MyWeatherScreen.Weather.name) {
