@@ -1,6 +1,5 @@
 package com.belizwp.myweather.data
 
-import com.belizwp.myweather.BuildConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
@@ -17,14 +16,10 @@ data class Weather(
     val windSpeed: String = ""
 )
 
-interface WeatherRepository {
-    suspend fun getWeatherByCityName(cityName: String): Weather
-}
-
-class RemoteWeatherRepository(
+class WeatherRepository(
     private val weatherStackApiService: WeatherStackApiService,
-) : WeatherRepository {
-    override suspend fun getWeatherByCityName(cityName: String): Weather {
+) {
+    suspend fun getWeatherByCityName(cityName: String): Weather {
         val resp = weatherStackApiService.getCurrentWeather(
             accessKey = "replaceme",
             query = cityName,

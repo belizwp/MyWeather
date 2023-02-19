@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.belizwp.myweather.data.SearchUiState
+import com.belizwp.myweather.data.WeatherRepository
 import com.belizwp.myweather.data.WeatherUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class WeatherViewModel : ViewModel() {
+class MyWeatherViewModel(
+    private val weatherRepository: WeatherRepository,
+) : ViewModel() {
 
     private val _weatherUiState: MutableStateFlow<WeatherUiState> =
         MutableStateFlow(WeatherUiState.Success())
