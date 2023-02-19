@@ -5,25 +5,28 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun DoubleBackPressToExit() {
-    var pressBackOnce by remember { mutableStateOf(false) }
+    var pressedOnce by remember { mutableStateOf(false) }
+    var resetPressedJob by remember { mutableStateOf<Job?>(null) }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     BackHandler {
         val activity = (context as? Activity)
-        if (pressBackOnce) {
+        if (pressedOnce) {
+            resetPressedJob?.cancel()
             activity?.finish()
         } else {
             Toast.makeText(context, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
-            pressBackOnce = true
-            coroutineScope.launch {
+            pressedOnce = true
+            resetPressedJob = coroutineScope.launch {
                 delay(2000)
-                pressBackOnce = false
+                pressedOnce = false
             }
         }
     }
