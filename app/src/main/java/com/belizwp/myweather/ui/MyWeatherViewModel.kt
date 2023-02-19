@@ -6,21 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.belizwp.myweather.data.Weather
 import com.belizwp.myweather.data.WeatherRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val TAG = "MyWeatherViewModel"
-
-data class SearchState(
-    val query: String = "",
-    val isQueryValid: Boolean = true,
-)
-
-sealed interface WeatherState {
-    object Loading : WeatherState
-    data class Success(val cityName: String = "") : WeatherState
-    object Error : WeatherState
-}
 
 class MyWeatherViewModel(
     private val weatherRepository: WeatherRepository,
@@ -46,25 +34,35 @@ class MyWeatherViewModel(
         onSearchSuccess: () -> Unit = {},
         onSearchError: (String) -> Unit = {},
     ) {
+        isLoading.value = true
         viewModelScope.launch {
-            isLoading.value = true
             try {
                 weather.value = weatherRepository.getWeatherByCityName(query.value)
-                isLoading.value = false
                 onSearchSuccess()
             } catch (e: Exception) {
                 Log.e(TAG, "search: ", e)
-                isLoading.value = false
                 onSearchError(e.message ?: "Unknown error")
+            } finally {
+                isLoading.value = false
             }
         }
     }
 
-    fun refresh() {
+    fun refresh(
+        onRefreshSuccess: () -> Unit = {},
+        onRefreshError: (String) -> Unit = {},
+    ) {
         isRefreshing.value = true
         viewModelScope.launch {
-            delay(400)
-            isRefreshing.value = false
+            try {
+                weather.value = weatherRepository.getWeatherByCityName(query.value)
+                onRefreshSuccess()
+            } catch (e: Exception) {
+                Log.e(TAG, "search: ", e)
+                onRefreshError(e.message ?: "Unknown error")
+            } finally {
+                isRefreshing.value = false
+            }
         }
     }
 

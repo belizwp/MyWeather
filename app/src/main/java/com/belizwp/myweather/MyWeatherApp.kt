@@ -53,12 +53,20 @@ fun MyWeatherApp(
             )
         }
         composable(route = MyWeatherScreen.Weather.name) {
+            val context = LocalContext.current
             WeatherScreen(
                 weather = viewModel.weather.value,
                 onCityNameClicked = { navController.navigate(MyWeatherScreen.Map.name) },
                 navigateBack = { navController.popBackStack() },
                 refreshing = viewModel.isRefreshing.value,
-                onRefresh = { viewModel.refresh() },
+                onRefresh = { viewModel.refresh(
+                    onRefreshSuccess = {
+                        Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
+                    },
+                    onRefreshError = { errMsg ->
+                        Toast.makeText(context, errMsg, Toast.LENGTH_SHORT).show()
+                    }
+                ) },
             )
         }
         composable(route = MyWeatherScreen.Map.name) {
