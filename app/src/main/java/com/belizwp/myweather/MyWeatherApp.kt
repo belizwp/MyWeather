@@ -1,11 +1,7 @@
 package com.belizwp.myweather
 
-import android.app.Activity
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,8 +10,7 @@ import com.belizwp.myweather.ui.MapScreen
 import com.belizwp.myweather.ui.MyWeatherViewModel
 import com.belizwp.myweather.ui.SearchScreen
 import com.belizwp.myweather.ui.WeatherScreen
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.belizwp.myweather.ui.components.DoubleBackPressToExit
 import org.koin.androidx.compose.koinViewModel
 
 enum class MyWeatherScreen {
@@ -55,25 +50,4 @@ fun MyWeatherApp(
     }
 
     DoubleBackPressToExit()
-}
-
-@Composable
-fun DoubleBackPressToExit() {
-    var pressBackOnce by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
-    BackHandler {
-        val activity = (context as? Activity)
-        if (pressBackOnce) {
-            activity?.finish()
-        } else {
-            Toast.makeText(context, "Press BACK again to exit", Toast.LENGTH_SHORT).show()
-            pressBackOnce = true
-            coroutineScope.launch {
-                delay(2000)
-                pressBackOnce = false
-            }
-        }
-    }
 }
