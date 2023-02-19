@@ -4,14 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.belizwp.myweather.data.Weather
-import com.belizwp.myweather.data.WeatherRepository
+import com.belizwp.myweather.domain.GetWeatherByCityNameUseCase
+import com.belizwp.myweather.domain.Weather
 import kotlinx.coroutines.launch
 
 const val TAG = "MyWeatherViewModel"
 
 class MyWeatherViewModel(
-    private val weatherRepository: WeatherRepository,
+    private val getWeatherByCityNameUseCase: GetWeatherByCityNameUseCase,
 ) : ViewModel() {
 
     var weather = mutableStateOf(Weather())
@@ -37,7 +37,7 @@ class MyWeatherViewModel(
         isLoading.value = true
         viewModelScope.launch {
             try {
-                weather.value = weatherRepository.getWeatherByCityName(query.value)
+                weather.value = getWeatherByCityNameUseCase(query.value)
                 onSearchSuccess()
             } catch (e: Exception) {
                 Log.e(TAG, "search: ", e)
@@ -55,7 +55,7 @@ class MyWeatherViewModel(
         isRefreshing.value = true
         viewModelScope.launch {
             try {
-                weather.value = weatherRepository.getWeatherByCityName(query.value)
+                weather.value = getWeatherByCityNameUseCase(query.value)
                 onRefreshSuccess()
             } catch (e: Exception) {
                 Log.e(TAG, "search: ", e)

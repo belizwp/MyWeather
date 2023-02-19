@@ -5,15 +5,16 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import com.google.gson.annotations.SerializedName
 
-data class Weather(
+data class WeatherData(
     val cityName: String = "",
     val country: String = "",
-    val temperature: String = "",
+    val temperature: Int = 0,
     val weatherIconUrl: String = "",
-    val humidity: String = "",
-    val pressure: String = "",
-    val uvIndex: String = "",
-    val wind: String = "",
+    val humidity: Int = 0,
+    val pressure: Int = 0,
+    val uvIndex: Int = 0,
+    val windSpeed: Int = 0,
+    val windDir: String = "",
     val lat: Double = 0.0,
     val lon: Double = 0.0,
 )
@@ -21,7 +22,7 @@ data class Weather(
 class WeatherRepository(
     private val weatherStackApiService: WeatherStackApiService,
 ) {
-    suspend fun getWeatherByCityName(cityName: String): Weather {
+    suspend fun getWeatherByCityName(cityName: String): WeatherData {
         val resp = weatherStackApiService.getCurrentWeather(
             accessKey = BuildConfig.WEATHER_STACK_ACCESS_KEY,
             query = cityName,
@@ -29,56 +30,28 @@ class WeatherRepository(
         if (resp.error != null) {
             throw Exception("${resp.error.code}: ${resp.error.type}")
         }
-        return Weather(
+        return WeatherData(
             cityName = resp.location.name,
             country = resp.location.country,
-            temperature = formatTemperature(resp.current.temperature),
+            temperature = resp.current.temperature,
             weatherIconUrl = resp.current.weatherIcons.firstOrNull() ?: "",
-            humidity = formatHumidity(resp.current.humidity),
-            pressure = formatPressure(resp.current.pressure),
-            uvIndex = formatUvIndex(resp.current.uvIndex),
-            wind = formatWind(resp.current.windSpeed, resp.current.windDir),
+            humidity = resp.current.humidity,
+            pressure = resp.current.pressure,
+            uvIndex = resp.current.uvIndex,
+            windSpeed = resp.current.windSpeed,
+            windDir = resp.current.windDir,
             lat = resp.location.lat.toDouble(),
             lon = resp.location.lon.toDouble(),
         )
     }
 }
 
-private fun formatTemperature(temperature: Int): String {
-    return "${temperature}°C"
-}
-
-private fun formatHumidity(humidity: Int): String {
-    return "${humidity}%"
-}
-
-private fun formatPressure(pressure: Int): String {
-    return "${pressure} mBar"
-}
-
-private fun formatUvIndex(uvIndex: Int): String {
-    val uvLevel = when (uvIndex) {
-        in 0..2 -> "Low"
-        in 3..5 -> "Moderate"
-        in 6..7 -> "High"
-        in 8..10 -> "Very High"
-        else -> "Extreme"
-    }
-    return "${uvLevel}, ${uvIndex}"
-}
-
-private fun formatWind(windSpeed: Int, windDir: String): String {
-    return "${windSpeed}km/h ${windDir}"
-}
-
 interface WeatherStackApiService {
-
     @GET("current")
     suspend fun getCurrentWeather(
         @Query("access_key") accessKey: String,
         @Query("query") query: String,
     ): WeatherStackResponse
-
 }
 
 data class WeatherStackResponse(
