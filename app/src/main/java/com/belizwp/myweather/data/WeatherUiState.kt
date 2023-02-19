@@ -11,7 +11,7 @@ sealed interface WeatherUiState {
         val uvIndex: String = "",
         val windSpeed: String = ""
     ) : WeatherUiState
+
     object Error : WeatherUiState
     object Loading : WeatherUiState
-    object Refreshing : WeatherUiState
 }

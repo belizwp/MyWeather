@@ -57,7 +57,7 @@ fun SearchScreen(
             value = query,
             onValueChange = { query = it },
             singleLine = true,
-            label = { Text("Search") },
+            label = { Text("Enter City Name") },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { onFindButtonClicked() }),
             modifier = Modifier

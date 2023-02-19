@@ -37,7 +37,7 @@ fun WeatherScreen(
         onBackPressed()
     }
 
-    val refreshing by viewModel.isRefreshing.collectAsState()
+    val refreshing by viewModel.isRefreshing
     val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.refresh() })
 
     Box(Modifier.pullRefresh(pullRefreshState)) {
