@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
@@ -29,16 +28,16 @@ import com.belizwp.myweather.ui.theme.MyWeatherTheme
 @Composable
 fun WeatherScreen(
     modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = viewModel(),
     onCityNameClicked: () -> Unit = {},
     navigateBack: () -> Unit = {},
+    refreshing: Boolean = false,
+    onRefresh: () -> Unit = {},
 ) {
     BackHandler() {
         navigateBack()
     }
 
-    val refreshing by viewModel.isRefreshing
-    val pullRefreshState = rememberPullRefreshState(refreshing, { viewModel.refresh() })
+    val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh)
 
     Box(Modifier.pullRefresh(pullRefreshState)) {
         LazyColumn(modifier = modifier.fillMaxSize()) {

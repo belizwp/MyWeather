@@ -12,11 +12,13 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit = {},
+    viewModel: MyWeatherViewModel = koinViewModel(),
 ) {
     BackHandler() {
         navigateBack()

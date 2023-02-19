@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.belizwp.myweather.data.SearchUiState
 import com.belizwp.myweather.ui.components.RoundedButton
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
 import kotlinx.coroutines.delay
@@ -28,8 +27,9 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
-    uiState: SearchUiState,
     modifier: Modifier = Modifier,
+    query: String = "",
+    isQueryValid: Boolean = true,
     onQueryChanged: (String) -> Unit = {},
     onSearchButtonClicked: () -> Unit = {},
 ) {
@@ -58,13 +58,13 @@ fun SearchScreen(
     ) {
         Column {
             OutlinedTextField(
-                value = uiState.query,
+                value = query,
                 onValueChange = onQueryChanged,
                 singleLine = true,
                 label = { Text("Enter City Name") },
-                isError = !uiState.isQueryValid,
+                isError = !isQueryValid,
                 trailingIcon = {
-                    if (!uiState.isQueryValid) {
+                    if (!isQueryValid) {
                         Icon(Icons.Filled.Error, "error", tint = MaterialTheme.colors.error)
                     }
                 },
@@ -81,7 +81,7 @@ fun SearchScreen(
                 style = MaterialTheme.typography.caption,
                 modifier = Modifier
                     .padding(start = 16.dp)
-                    .alpha(if (!uiState.isQueryValid) 1f else 0f)
+                    .alpha(if (!isQueryValid) 1f else 0f)
             )
         }
         RoundedButton(
@@ -97,6 +97,6 @@ fun SearchScreen(
 @Composable
 fun SearchScreenPreview() {
     MyWeatherTheme {
-        SearchScreen(SearchUiState())
+        SearchScreen()
     }
 }

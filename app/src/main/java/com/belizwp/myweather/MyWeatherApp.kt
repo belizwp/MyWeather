@@ -6,18 +6,17 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.belizwp.myweather.ui.MapScreen
+import com.belizwp.myweather.ui.MyWeatherViewModel
 import com.belizwp.myweather.ui.SearchScreen
 import com.belizwp.myweather.ui.WeatherScreen
-import com.belizwp.myweather.ui.WeatherViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 enum class MyWeatherScreen {
     Search,
@@ -28,46 +27,29 @@ enum class MyWeatherScreen {
 @Composable
 fun MyWeatherApp(
     modifier: Modifier = Modifier,
-    viewModel: WeatherViewModel = viewModel(),
+    viewModel: MyWeatherViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = MyWeatherScreen.valueOf(
-        backStackEntry?.destination?.route ?: MyWeatherScreen.Search.name
-    )
-    val searchUiState by viewModel.searchUiState.collectAsState()
-    val weatherUiState by viewModel.weatherUiState.collectAsState()
-
     NavHost(
         navController = navController,
         startDestination = MyWeatherScreen.Search.name,
+        modifier = modifier
     ) {
         composable(route = MyWeatherScreen.Search.name) {
             SearchScreen(
-                uiState = searchUiState,
                 onQueryChanged = { viewModel.updateQuery(it) },
-                onSearchButtonClicked = {
-                    if (viewModel.findWeather()) {
-                        navController.navigate(MyWeatherScreen.Weather.name)
-                    }
-                }
+                onSearchButtonClicked = { navController.navigate(MyWeatherScreen.Weather.name) }
             )
         }
         composable(route = MyWeatherScreen.Weather.name) {
             WeatherScreen(
-                onCityNameClicked = {
-                    navController.navigate(MyWeatherScreen.Map.name)
-                },
-                navigateBack = {
-                    navController.popBackStack()
-                }
+                onCityNameClicked = { navController.navigate(MyWeatherScreen.Map.name) },
+                navigateBack = { navController.popBackStack() }
             )
         }
         composable(route = MyWeatherScreen.Map.name) {
             MapScreen(
-                navigateBack = {
-                    navController.popBackStack()
-                }
+                navigateBack = { navController.popBackStack() }
             )
         }
     }
