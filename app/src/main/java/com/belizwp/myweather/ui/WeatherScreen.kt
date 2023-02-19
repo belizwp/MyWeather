@@ -31,10 +31,10 @@ fun WeatherScreen(
     modifier: Modifier = Modifier,
     viewModel: WeatherViewModel = viewModel(),
     onCityNameClicked: () -> Unit = {},
-    onBackPressed: () -> Unit = {},
+    navigateBack: () -> Unit = {},
 ) {
     BackHandler() {
-        onBackPressed()
+        navigateBack()
     }
 
     val refreshing by viewModel.isRefreshing

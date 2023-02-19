@@ -16,10 +16,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit = {},
+    navigateBack: () -> Unit = {},
 ) {
     BackHandler() {
-        onBackPressed()
+        navigateBack()
     }
 
     val singapore = LatLng(1.35, 103.87)

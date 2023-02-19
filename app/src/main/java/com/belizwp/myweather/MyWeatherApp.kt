@@ -35,7 +35,8 @@ fun MyWeatherApp(
     val currentScreen = MyWeatherScreen.valueOf(
         backStackEntry?.destination?.route ?: MyWeatherScreen.Search.name
     )
-    val uiState by viewModel.uiState.collectAsState()
+    val searchUiState by viewModel.searchUiState.collectAsState()
+    val weatherUiState by viewModel.weatherUiState.collectAsState()
 
     NavHost(
         navController = navController,
@@ -43,9 +44,12 @@ fun MyWeatherApp(
     ) {
         composable(route = MyWeatherScreen.Search.name) {
             SearchScreen(
-                onFindButtonClicked = {
-//                    viewModel.findWeather(it)
-                    navController.navigate(MyWeatherScreen.Weather.name)
+                uiState = searchUiState,
+                onQueryChanged = { viewModel.updateQuery(it) },
+                onSearchButtonClicked = {
+                    if (viewModel.findWeather()) {
+                        navController.navigate(MyWeatherScreen.Weather.name)
+                    }
                 }
             )
         }
@@ -54,15 +58,15 @@ fun MyWeatherApp(
                 onCityNameClicked = {
                     navController.navigate(MyWeatherScreen.Map.name)
                 },
-                onBackPressed = {
-                    navController.popBackStack(MyWeatherScreen.Search.name, inclusive = false)
+                navigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
         composable(route = MyWeatherScreen.Map.name) {
             MapScreen(
-                onBackPressed = {
-                    navController.popBackStack(MyWeatherScreen.Weather.name, inclusive = false)
+                navigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
