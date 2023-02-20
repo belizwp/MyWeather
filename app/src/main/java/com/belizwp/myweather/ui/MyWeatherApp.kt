@@ -1,19 +1,21 @@
-package com.belizwp.myweather
+package com.belizwp.myweather.ui
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.belizwp.myweather.ui.MapScreen
-import com.belizwp.myweather.ui.MyWeatherViewModel
-import com.belizwp.myweather.ui.SearchScreen
-import com.belizwp.myweather.ui.WeatherScreen
 import com.belizwp.myweather.ui.components.DoubleBackPressToExit
 import com.belizwp.myweather.ui.components.LoadingDialog
+import com.belizwp.myweather.ui.screen.MapScreen
+import com.belizwp.myweather.ui.screen.SearchScreen
+import com.belizwp.myweather.ui.screen.WeatherScreen
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
 enum class MyWeatherScreen {
@@ -28,7 +30,30 @@ fun MyWeatherApp(
     viewModel: MyWeatherViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    if (viewModel.isLoading.value) {
+    val context = LocalContext.current
+
+    DoubleBackPressToExit()
+
+    LaunchedEffect(Unit) {
+        viewModel.eventsFlow.collectLatest { event ->
+            when (event) {
+                is Event.SearchSucceeded -> {
+                    navController.navigate(MyWeatherScreen.Weather.name)
+                }
+                is Event.SearchFailed -> {
+                    Toast.makeText(context, event.error, Toast.LENGTH_SHORT).show()
+                }
+                is Event.RefreshSucceeded -> {
+                    Toast.makeText(context, "Refresh succeeded", Toast.LENGTH_SHORT).show()
+                }
+                is Event.RefreshFailed -> {
+                    Toast.makeText(context, event.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    AnimatedVisibility(visible = viewModel.isLoading.value) {
         LoadingDialog()
     }
 
@@ -38,35 +63,20 @@ fun MyWeatherApp(
         modifier = modifier
     ) {
         composable(route = MyWeatherScreen.Search.name) {
-            val context = LocalContext.current
             SearchScreen(
                 query = viewModel.query.value,
+                isQueryValid = viewModel.isQueryValid.value,
                 onQueryChanged = { viewModel.updateQuery(it) },
-                onSearchButtonClicked = {
-                    viewModel.search(
-                        onSearchSuccess = { navController.navigate(MyWeatherScreen.Weather.name) },
-                        onSearchError = { errMsg ->
-                            Toast.makeText(context, errMsg, Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                },
+                onSearchButtonClicked = { viewModel.search() },
             )
         }
         composable(route = MyWeatherScreen.Weather.name) {
-            val context = LocalContext.current
             WeatherScreen(
                 weather = viewModel.weather.value,
                 onCityNameClicked = { navController.navigate(MyWeatherScreen.Map.name) },
                 navigateBack = { navController.popBackStack() },
                 refreshing = viewModel.isRefreshing.value,
-                onRefresh = { viewModel.refresh(
-                    onRefreshSuccess = {
-                        Toast.makeText(context, "Refreshed", Toast.LENGTH_SHORT).show()
-                    },
-                    onRefreshError = { errMsg ->
-                        Toast.makeText(context, errMsg, Toast.LENGTH_SHORT).show()
-                    }
-                ) },
+                onRefresh = { viewModel.refresh() },
             )
         }
         composable(route = MyWeatherScreen.Map.name) {
@@ -76,6 +86,4 @@ fun MyWeatherApp(
             )
         }
     }
-
-    DoubleBackPressToExit()
 }

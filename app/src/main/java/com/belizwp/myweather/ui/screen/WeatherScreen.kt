@@ -1,7 +1,6 @@
-package com.belizwp.myweather.ui
+package com.belizwp.myweather.ui.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +23,7 @@ import coil.compose.AsyncImage
 import com.belizwp.myweather.R
 import com.belizwp.myweather.domain.Weather
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
+import com.belizwp.myweather.util.verticalGradientScrim
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -48,7 +48,11 @@ fun WeatherScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.colors.primary)
+                        .verticalGradientScrim(
+                            color = MaterialTheme.colors.primary.copy(alpha = 0.38f),
+                            startYPercentage = 1f,
+                            endYPercentage = 0f
+                        )
                         .clickable { onCityNameClicked() }
                         .padding(32.dp)
                 ) {

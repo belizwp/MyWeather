@@ -1,4 +1,4 @@
-package com.belizwp.myweather.ui
+package com.belizwp.myweather.ui.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize

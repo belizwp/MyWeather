@@ -1,5 +1,6 @@
-package com.belizwp.myweather.ui
+package com.belizwp.myweather.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -11,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.pointerInput
@@ -36,6 +36,7 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
+    val isQueryError = !isQueryValid
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -62,9 +63,9 @@ fun SearchScreen(
                 onValueChange = onQueryChanged,
                 singleLine = true,
                 label = { Text("Enter City Name") },
-                isError = !isQueryValid,
+                isError = isQueryError,
                 trailingIcon = {
-                    if (!isQueryValid) {
+                    if (isQueryError) {
                         Icon(Icons.Filled.Error, "error", tint = MaterialTheme.colors.error)
                     }
                 },
@@ -75,14 +76,14 @@ fun SearchScreen(
                     .padding(16.dp)
                     .focusRequester(focusRequester)
             )
-            Text(
-                text = "City Name Cannot Be Empty",
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .alpha(if (!isQueryValid) 1f else 0f)
-            )
+            AnimatedVisibility(visible = isQueryError) {
+                Text(
+                    text = "City Name Cannot Be Empty",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
         }
         RoundedButton(
             onClick = onSearchButtonClicked,
