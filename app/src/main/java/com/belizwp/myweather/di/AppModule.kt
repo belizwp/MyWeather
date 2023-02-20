@@ -1,7 +1,6 @@
 package com.belizwp.myweather.di
 
 import com.belizwp.myweather.BuildConfig
-import com.belizwp.myweather.data.repository.IWeatherRepository
 import com.belizwp.myweather.data.repository.WeatherRepository
 import com.belizwp.myweather.data.service.WeatherStackApiService
 import com.belizwp.myweather.domain.usecase.GetWeatherByCityNameUseCase
@@ -16,7 +15,7 @@ val appModule = module {
     factory { provideOkHttpClient() }
     single { provideWeatherStackApi(get()) }
     single {
-        WeatherRepository(get()) as IWeatherRepository
+        WeatherRepository(get())
     }
     single {
         GetWeatherByCityNameUseCase(get())
