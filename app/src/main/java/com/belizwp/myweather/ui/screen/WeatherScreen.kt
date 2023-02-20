@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.belizwp.myweather.R
 import com.belizwp.myweather.domain.model.Weather
+import com.belizwp.myweather.ui.MyWeatherUiState
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
 import com.belizwp.myweather.util.verticalGradientScrim
 
@@ -29,17 +30,17 @@ import com.belizwp.myweather.util.verticalGradientScrim
 @Composable
 fun WeatherScreen(
     modifier: Modifier = Modifier,
-    weather: Weather = Weather(),
+    uiState: MyWeatherUiState = MyWeatherUiState(),
     onCityNameClicked: () -> Unit = {},
-    navigateBack: () -> Unit = {},
-    refreshing: Boolean = false,
     onRefresh: () -> Unit = {},
+    onNavigateBack: () -> Unit = {},
 ) {
-    BackHandler() {
-        navigateBack()
-    }
+    val weather = uiState.weather
+    val pullRefreshState = rememberPullRefreshState(uiState.isRefreshing, onRefresh)
 
-    val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh)
+    BackHandler() {
+        onNavigateBack()
+    }
 
     Box(Modifier.pullRefresh(pullRefreshState)) {
         LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -122,7 +123,7 @@ fun WeatherScreen(
                 }
             }
         }
-        PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+        PullRefreshIndicator(uiState.isRefreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
     }
 }
 
@@ -150,6 +151,6 @@ fun WeatherScreenPreview() {
         wind = "10 km/h, ENE"
     )
     MyWeatherTheme {
-        WeatherScreen(weather = mockWeather)
+        WeatherScreen(uiState = MyWeatherUiState(weather = mockWeather))
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.belizwp.myweather.ui.MyWeatherUiState
 import com.belizwp.myweather.ui.components.RoundedButton
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
 import kotlinx.coroutines.delay
@@ -28,15 +29,14 @@ import kotlinx.coroutines.delay
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    query: String = "",
-    isQueryValid: Boolean = true,
+    uiState: MyWeatherUiState = MyWeatherUiState(),
     onQueryChanged: (String) -> Unit = {},
     onSearchButtonClicked: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
-    val isQueryError = !isQueryValid
+    val isQueryError = !uiState.isQueryValid
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -59,7 +59,7 @@ fun SearchScreen(
     ) {
         Column {
             OutlinedTextField(
-                value = query,
+                value = uiState.query,
                 onValueChange = onQueryChanged,
                 singleLine = true,
                 label = { Text("Enter City Name") },

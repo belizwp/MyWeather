@@ -4,6 +4,8 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -30,6 +32,7 @@ fun MyWeatherApp(
     viewModel: MyWeatherViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     DoubleBackPressToExit()
@@ -53,7 +56,7 @@ fun MyWeatherApp(
         }
     }
 
-    AnimatedVisibility(visible = viewModel.isLoading.value) {
+    AnimatedVisibility(visible = uiState.isLoading) {
         LoadingDialog()
     }
 
@@ -64,25 +67,23 @@ fun MyWeatherApp(
     ) {
         composable(route = MyWeatherScreen.Search.name) {
             SearchScreen(
-                query = viewModel.query.value,
-                isQueryValid = viewModel.isQueryValid.value,
+                uiState = uiState,
                 onQueryChanged = { viewModel.updateQuery(it) },
                 onSearchButtonClicked = { viewModel.search() },
             )
         }
         composable(route = MyWeatherScreen.Weather.name) {
             WeatherScreen(
-                weather = viewModel.weather.value,
+                uiState = uiState,
                 onCityNameClicked = { navController.navigate(MyWeatherScreen.Map.name) },
-                navigateBack = { navController.popBackStack() },
-                refreshing = viewModel.isRefreshing.value,
+                onNavigateBack = { navController.popBackStack() },
                 onRefresh = { viewModel.refresh() },
             )
         }
         composable(route = MyWeatherScreen.Map.name) {
             MapScreen(
-                weather = viewModel.weather.value,
-                navigateBack = { navController.popBackStack() }
+                uiState = uiState,
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }
