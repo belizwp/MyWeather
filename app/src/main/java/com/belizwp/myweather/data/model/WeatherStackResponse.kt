@@ -1,58 +1,6 @@
-package com.belizwp.myweather.data
+package com.belizwp.myweather.data.model
 
-import com.belizwp.myweather.BuildConfig
-import retrofit2.http.GET
-import retrofit2.http.Query
 import com.google.gson.annotations.SerializedName
-
-data class WeatherData(
-    val cityName: String = "",
-    val country: String = "",
-    val temperature: Int = 0,
-    val weatherIconUrl: String = "",
-    val humidity: Int = 0,
-    val pressure: Int = 0,
-    val uvIndex: Int = 0,
-    val windSpeed: Int = 0,
-    val windDir: String = "",
-    val lat: Double = 0.0,
-    val lon: Double = 0.0,
-)
-
-class WeatherRepository(
-    private val weatherStackApiService: WeatherStackApiService,
-) {
-    suspend fun getWeatherByCityName(cityName: String): WeatherData {
-        val resp = weatherStackApiService.getCurrentWeather(
-            accessKey = BuildConfig.WEATHER_STACK_ACCESS_KEY,
-            query = cityName,
-        )
-        if (resp.error != null) {
-            throw Exception("${resp.error.code}: ${resp.error.type}")
-        }
-        return WeatherData(
-            cityName = resp.location.name,
-            country = resp.location.country,
-            temperature = resp.current.temperature,
-            weatherIconUrl = resp.current.weatherIcons.firstOrNull() ?: "",
-            humidity = resp.current.humidity,
-            pressure = resp.current.pressure,
-            uvIndex = resp.current.uvIndex,
-            windSpeed = resp.current.windSpeed,
-            windDir = resp.current.windDir,
-            lat = resp.location.lat.toDouble(),
-            lon = resp.location.lon.toDouble(),
-        )
-    }
-}
-
-interface WeatherStackApiService {
-    @GET("current")
-    suspend fun getCurrentWeather(
-        @Query("access_key") accessKey: String,
-        @Query("query") query: String,
-    ): WeatherStackResponse
-}
 
 data class WeatherStackResponse(
     @SerializedName("success")

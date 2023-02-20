@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.belizwp.myweather.domain.GetWeatherByCityNameUseCase
-import com.belizwp.myweather.domain.Weather
+import com.belizwp.myweather.domain.usecase.GetWeatherByCityNameUseCase
+import com.belizwp.myweather.domain.model.Weather
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch

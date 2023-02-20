@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.belizwp.myweather.R
-import com.belizwp.myweather.domain.Weather
+import com.belizwp.myweather.domain.model.Weather
 import com.belizwp.myweather.ui.theme.MyWeatherTheme
 import com.belizwp.myweather.util.verticalGradientScrim
 

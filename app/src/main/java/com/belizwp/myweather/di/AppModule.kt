@@ -1,9 +1,10 @@
 package com.belizwp.myweather.di
 
 import com.belizwp.myweather.BuildConfig
-import com.belizwp.myweather.data.WeatherRepository
-import com.belizwp.myweather.data.WeatherStackApiService
-import com.belizwp.myweather.domain.GetWeatherByCityNameUseCase
+import com.belizwp.myweather.data.repository.IWeatherRepository
+import com.belizwp.myweather.data.repository.WeatherRepository
+import com.belizwp.myweather.data.service.WeatherStackApiService
+import com.belizwp.myweather.domain.usecase.GetWeatherByCityNameUseCase
 import com.belizwp.myweather.ui.MyWeatherViewModel
 import okhttp3.OkHttpClient
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -15,7 +16,7 @@ val appModule = module {
     factory { provideOkHttpClient() }
     single { provideWeatherStackApi(get()) }
     single {
-        WeatherRepository(get())
+        WeatherRepository(get()) as IWeatherRepository
     }
     single {
         GetWeatherByCityNameUseCase(get())
