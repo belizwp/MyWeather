@@ -31,32 +31,30 @@ class WeatherRepositoryTest {
     }
 
     @Test
-    fun weatherRepository_getWeatherByCityName_withSuccessData() =
-        runTest {
-            val mockWeatherStackResponse = FakeWeatherStackResponse.successResponse
-            val weatherRepository: WeatherRepository =
-                WeatherRepositoryImpl(mockWeatherStackApiService)
+    fun weatherRepository_getWeatherByCityName_withSuccessData() = runTest {
+        val mockWeatherStackResponse = FakeWeatherStackResponse.successResponse
+        val weatherRepository: WeatherRepository =
+            WeatherRepositoryImpl(mockWeatherStackApiService)
 
-            Mockito.`when`(
-                mockWeatherStackApiService.getCurrentWeather(any(), eq("London"))
-            ).thenReturn(mockWeatherStackResponse)
+        Mockito.`when`(
+            mockWeatherStackApiService.getCurrentWeather(any(), eq("London"))
+        ).thenReturn(mockWeatherStackResponse)
 
-            val weatherData = weatherRepository.getWeatherByCityName("London")
+        val weatherData = weatherRepository.getWeatherByCityName("London")
 
-            assert(weatherData.cityName == "London")
-        }
+        assert(weatherData.cityName == "London")
+    }
 
     @Test(expected = Exception::class)
-    fun weatherRepository_getWeatherByCityName_withErrorData() =
-        runTest {
-            val mockWeatherStackResponse = FakeWeatherStackResponse.errorResponse
-            val weatherRepository: WeatherRepository =
-                WeatherRepositoryImpl(mockWeatherStackApiService)
+    fun weatherRepository_getWeatherByCityName_withErrorData() = runTest {
+        val mockWeatherStackResponse = FakeWeatherStackResponse.errorResponse
+        val weatherRepository: WeatherRepository =
+            WeatherRepositoryImpl(mockWeatherStackApiService)
 
-            Mockito.`when`(
-                mockWeatherStackApiService.getCurrentWeather(any(), eq("London"))
-            ).thenReturn(mockWeatherStackResponse)
+        Mockito.`when`(
+            mockWeatherStackApiService.getCurrentWeather(any(), eq("London"))
+        ).thenReturn(mockWeatherStackResponse)
 
-            weatherRepository.getWeatherByCityName("London")
-        }
+        weatherRepository.getWeatherByCityName("London")
+    }
 }

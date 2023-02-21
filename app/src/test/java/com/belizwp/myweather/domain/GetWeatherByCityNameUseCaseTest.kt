@@ -16,12 +16,11 @@ class GetWeatherByCityNameUseCaseTest {
     var testDispatcherRule = TestDispatcherRule()
 
     @Test
-    fun getWeatherByCityNameUseCase_invoke_verifyData() =
-        runTest {
-            val mockWeatherRepository: WeatherRepository = FakeWeatherRepository()
-            val getWeatherByCityNameUseCase = GetWeatherByCityNameUseCase(mockWeatherRepository)
-            val weather = getWeatherByCityNameUseCase("London")
+    fun getWeatherByCityNameUseCase_invoke_verifyData() = runTest {
+        val mockWeatherRepository: WeatherRepository = FakeWeatherRepository()
+        val getWeatherByCityNameUseCase = GetWeatherByCityNameUseCase(mockWeatherRepository)
+        val weather = getWeatherByCityNameUseCase("London")
 
-            assert(weather.cityName == "London")
-        }
+        assert(weather.cityName == "London")
+    }
 }
