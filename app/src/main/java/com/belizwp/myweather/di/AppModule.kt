@@ -2,7 +2,7 @@ package com.belizwp.myweather.di
 
 import com.belizwp.myweather.BuildConfig
 import com.belizwp.myweather.data.repository.WeatherRepository
-import com.belizwp.myweather.data.repository.impl.WeatherRepositoryImpl
+import com.belizwp.myweather.data.repository.WeatherRepositoryImpl
 import com.belizwp.myweather.data.service.WeatherStackApiService
 import com.belizwp.myweather.domain.usecase.GetWeatherByCityNameUseCase
 import com.belizwp.myweather.ui.MyWeatherViewModel
@@ -15,8 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 val appModule = module {
     factory { provideOkHttpClient() }
     single { provideWeatherStackApi(get()) }
-    single {
-        WeatherRepositoryImpl(get()) as WeatherRepository
+    single<WeatherRepository> {
+        WeatherRepositoryImpl(get())
     }
     single {
         GetWeatherByCityNameUseCase(get())

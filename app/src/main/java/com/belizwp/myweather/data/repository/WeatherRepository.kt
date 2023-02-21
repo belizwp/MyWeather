@@ -1,9 +1,12 @@
-package com.belizwp.myweather.data.repository.impl
+package com.belizwp.myweather.data.repository
 
 import com.belizwp.myweather.BuildConfig
 import com.belizwp.myweather.data.model.WeatherData
-import com.belizwp.myweather.data.repository.WeatherRepository
 import com.belizwp.myweather.data.service.WeatherStackApiService
+
+interface WeatherRepository {
+    suspend fun getWeatherByCityName(cityName: String): WeatherData
+}
 
 class WeatherRepositoryImpl(
     private val weatherStackApiService: WeatherStackApiService,
