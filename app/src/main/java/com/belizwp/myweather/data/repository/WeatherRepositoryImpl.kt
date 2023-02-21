@@ -4,13 +4,13 @@ import com.belizwp.myweather.BuildConfig
 import com.belizwp.myweather.data.model.WeatherData
 import com.belizwp.myweather.data.service.WeatherStackApiService
 
-interface IWeatherRepository {
+interface WeatherRepository {
     suspend fun getWeatherByCityName(cityName: String): WeatherData
 }
 
-class WeatherRepository(
+class WeatherRepositoryImpl(
     private val weatherStackApiService: WeatherStackApiService,
-) : IWeatherRepository{
+) : WeatherRepository{
     override suspend fun getWeatherByCityName(cityName: String): WeatherData {
         val resp = weatherStackApiService.getCurrentWeather(
             accessKey = BuildConfig.WEATHER_STACK_ACCESS_KEY,

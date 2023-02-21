@@ -1,10 +1,10 @@
 package com.belizwp.myweather.domain.usecase
 
-import com.belizwp.myweather.data.repository.IWeatherRepository
+import com.belizwp.myweather.data.repository.WeatherRepository
 import com.belizwp.myweather.domain.model.Weather
 
 class GetWeatherByCityNameUseCase(
-    private val weatherRepository: IWeatherRepository,
+    private val weatherRepository: WeatherRepository,
 ) {
     suspend operator fun invoke(cityName: String): Weather {
         val weatherData = weatherRepository.getWeatherByCityName(cityName)
