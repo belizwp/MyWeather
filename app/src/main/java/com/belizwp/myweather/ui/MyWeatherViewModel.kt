@@ -3,8 +3,8 @@ package com.belizwp.myweather.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.belizwp.myweather.domain.usecase.GetWeatherByCityNameUseCase
 import com.belizwp.myweather.domain.model.Weather
+import com.belizwp.myweather.domain.usecase.GetWeatherByCityNameUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -105,5 +105,4 @@ class MyWeatherViewModel(
     private fun validateQuery(query: String): Boolean {
         return query.isNotBlank()
     }
-
 }

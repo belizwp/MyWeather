@@ -24,11 +24,11 @@ class GetWeatherByCityNameUseCase(
 }
 
 private fun formatTemperature(temperature: Int): String {
-    return "${temperature}°C"
+    return "$temperature°C"
 }
 
 private fun formatHumidity(humidity: Int): String {
-    return "${humidity}%"
+    return "$humidity%"
 }
 
 private fun formatPressure(pressure: Int): String {
@@ -43,7 +43,7 @@ private fun formatUvIndex(uvIndex: Int): String {
         in 8..10 -> "Very High"
         else -> "Extreme"
     }
-    return "${uvLevel}, $uvIndex"
+    return "$uvLevel, $uvIndex"
 }
 
 private fun formatWind(windSpeed: Int, windDir: String): String {

@@ -1,6 +1,10 @@
 package com.belizwp.myweather.fake
 
-import com.belizwp.myweather.data.model.*
+import com.belizwp.myweather.data.model.Current
+import com.belizwp.myweather.data.model.Error
+import com.belizwp.myweather.data.model.Request
+import com.belizwp.myweather.data.model.WeatherStackResponse
+import com.belizwp.myweather.data.model.Location
 
 object FakeWeatherStackResponse {
     val successResponse = WeatherStackResponse(
