@@ -19,6 +19,12 @@ class WeatherRepositoryImpl(
         if (resp.error != null) {
             throw Exception("${resp.error.code}: ${resp.error.type}")
         }
+        if (resp.location == null) {
+            throw Exception("Location data is null")
+        }
+        if (resp.current == null) {
+            throw Exception("Current data is null")
+        }
         return WeatherData(
             cityName = resp.location.name,
             country = resp.location.country,

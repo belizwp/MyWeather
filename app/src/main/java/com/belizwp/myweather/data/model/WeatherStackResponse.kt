@@ -8,11 +8,11 @@ data class WeatherStackResponse(
     @SerializedName("error")
     val error: Error? = null,
     @SerializedName("request")
-    val request: Request,
+    val request: Request? = null,
     @SerializedName("location")
-    val location: Location,
+    val location: Location? = null,
     @SerializedName("current")
-    val current: Current,
+    val current: Current? = null,
 )
 
 data class Error(
@@ -64,9 +64,9 @@ data class Current(
     @SerializedName("weather_code")
     val weatherCode: Int,
     @SerializedName("weather_icons")
-    val weatherIcons: ArrayList<String> = arrayListOf(),
+    val weatherIcons: List<String> = emptyList(),
     @SerializedName("weather_descriptions")
-    val weatherDescriptions: ArrayList<String> = arrayListOf(),
+    val weatherDescriptions: List<String> = emptyList(),
     @SerializedName("wind_speed")
     val windSpeed: Int,
     @SerializedName("wind_degree")
