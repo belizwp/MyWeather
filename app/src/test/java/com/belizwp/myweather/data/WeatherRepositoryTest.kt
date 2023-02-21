@@ -1,5 +1,7 @@
-package com.belizwp.myweather.data.repository
+package com.belizwp.myweather.data
 
+import com.belizwp.myweather.data.repository.WeatherRepository
+import com.belizwp.myweather.data.repository.WeatherRepositoryImpl
 import com.belizwp.myweather.data.service.WeatherStackApiService
 import com.belizwp.myweather.fake.FakeWeatherStackResponse
 import com.belizwp.myweather.rule.TestDispatcherRule
