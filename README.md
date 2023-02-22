@@ -9,8 +9,8 @@ This is a simple weather app that uses the WeatherStack API to get the current w
 
 ## Getting Started
 
-- copy the `local.properties.example` file to `local.properties`
-- add your API key to the `local.properties` file
+- copy the `local.default.properties` file to `local.properties`
+- replace your API key to the `local.properties` file
 - build and run the app
 
 ## Run Lint Checks
