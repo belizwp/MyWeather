@@ -1,5 +1,7 @@
 # My Weather App
 
+[![Build](https://github.com/belizwp/MyWeather/actions/workflows/android-ci.yml/badge.svg)](https://github.com/belizwp/MyWeather/actions/workflows/android-ci.yml)
+
 This is a simple weather app that uses the WeatherStack API to get the current weather for a city.
 
 ## Pre-requisites
