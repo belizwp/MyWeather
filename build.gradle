@@ -4,6 +4,9 @@ buildscript {
         koin_android_version = '3.3.3'
         koin_android_compose_version = '3.4.2'
     }
+    dependencies {
+        classpath "org.jacoco:org.jacoco.core:0.8.8"
+    }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id 'com.android.application' version '7.4.1' apply false
@@ -13,6 +16,7 @@ plugins {
     id 'jacoco'
 }
 allprojects {
+    apply plugin: 'jacoco'
     apply plugin: "org.jlleitschuh.gradle.ktlint"
     ktlint {
         version = "0.42.1"

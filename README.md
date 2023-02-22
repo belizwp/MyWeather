@@ -18,3 +18,10 @@ This is a simple weather app that uses the WeatherStack API to get the current w
 `./gradlew ktlintCheck`
 
 `./gradlew ktlintFormat`
+
+## Run Tests with Coverage
+
+`./gradlew testDebugUnitTest`
+
+to run tests for a specific module:
+`./gradlew :module:testDebugUnitTest` 
